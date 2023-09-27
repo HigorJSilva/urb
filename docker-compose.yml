@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+    dev:
+        container_name: ${APP_NAME}_dev
+        image: ${APP_NAME}-dev:1.0.0  # ${APP_NAME}-prod:1.0.0
+        build:
+            context: .
+            target: development # production
+            dockerfile: ./Dockerfile
+        command: yarn start:debug # yarn start:prod
+        ports:
+            - 3131:3131
+            - 9239:9239
+        networks:
+            - nest-network
+        volumes:
+            - .:/usr/src/app
+            - /usr/src/app/node_modules
+        restart: unless-stopped
+
+networks:
+  nest-network:
+    name: ${APP_NETWORK}
+    driver: bridge
