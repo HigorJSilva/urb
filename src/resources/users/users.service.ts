@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ValidateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -18,6 +23,14 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    const user = await this.findUserByEmail(createUserDto.email).catch(
+      () => undefined,
+    );
+
+    if (user) {
+      throw new BadRequestException('email already in use');
+    }
+
     const hashedPassword = await this.hash.generateHash(createUserDto.password);
 
     return this.userRepository.save({
@@ -28,5 +41,19 @@ export class UsersService {
 
   validate(validateUserDto: ValidateUserDto) {
     return `This action returns all users`;
+  }
+
+  async findUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`Email: ${email} Not Found`);
+    }
+
+    return user;
   }
 }
