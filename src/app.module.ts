@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ResourcesModule } from './resources/resources.module';
 import { UsersModule } from './resources/users/users.module';
+import { IsUniqueConstraint } from './shared/rules/unique';
 
 @Module({
   imports: [
@@ -26,6 +27,6 @@ import { UsersModule } from './resources/users/users.module';
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, IsUniqueConstraint],
 })
 export class AppModule {}

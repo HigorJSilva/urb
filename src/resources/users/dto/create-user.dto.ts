@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
+import { isUnique } from 'src/shared/decorator/unique';
 
 export class CreateUserDto {
   @IsString()
@@ -9,6 +10,7 @@ export class CreateUserDto {
   @IsEmail(undefined, {
     message: 'Must be a valid email address',
   })
+  @isUnique({ tableName: 'users', column: 'email' })
   email: string;
 
   @IsString()
