@@ -46,7 +46,9 @@ describe('UserService', () => {
 
       expect(user).toEqual(userEntityMock);
     });
+  });
 
+  describe('find user by email service', () => {
     it('should return user in findUserByEmail', async () => {
       const user = await service.findUserByEmail(userEntityMock.email);
 
