@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ValidateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -37,10 +36,6 @@ export class UsersService {
       ...createUserDto,
       password: hashedPassword,
     });
-  }
-
-  validate(validateUserDto: ValidateUserDto) {
-    return `This action returns all users`;
   }
 
   async findUserByEmail(email: string): Promise<User> {
