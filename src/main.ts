@@ -11,9 +11,9 @@ async function bootstrap() {
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
+  app.setGlobalPrefix('/api');
   SwaggerModule.setup('api', app, SwaggerModule.createDocument(app, config));
 
-  app.setGlobalPrefix('/api');
   await app.listen(configService.get('PORT'));
 }
 bootstrap();
