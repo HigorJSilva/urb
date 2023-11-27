@@ -5,6 +5,7 @@ import { isUnique } from 'src/shared/decorator/unique';
 export class CreateUserDto {
   @ApiProperty({
     description: "User's email",
+    required: true,
   })
   @IsString()
   @IsEmail(undefined, {
@@ -12,6 +13,13 @@ export class CreateUserDto {
   })
   @isUnique({ tableName: 'users', column: 'email' })
   email: string;
+
+  @ApiProperty({
+    description: "User's password",
+    maximum: 20,
+    minimum: 4,
+    required: true,
+  })
   @IsString()
   @IsString()
   @MinLength(4)
@@ -21,7 +29,8 @@ export class CreateUserDto {
   @ApiProperty({
     description: "User's username",
     maximum: 20,
-    minimum: 8,
+    minimum: 4,
+    required: true,
   })
   @IsString()
   @MinLength(8)
