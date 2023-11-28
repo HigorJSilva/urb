@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ResourcesModule } from './resources/resources.module';
-import { UsersModule } from './resources/users/users.module';
 import { IsUniqueConstraint } from './shared/rules/unique';
 
 @Module({
@@ -24,7 +23,6 @@ import { IsUniqueConstraint } from './shared/rules/unique';
       migrationsRun: true,
     }),
     ResourcesModule,
-    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, IsUniqueConstraint],
