@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/shared/config/auth/constants';
 import Bcrypt from 'src/shared/providers/hash/bcrypt';
+import { ReturnLoginDto } from './dto/returnLogin';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  async login(loginDto: LoginDto): Promise<ReturnLoginDto> {
     const user = await this.userService
       .findUserByEmail(loginDto.email)
       .catch(() => undefined);
@@ -33,7 +34,7 @@ export class AuthService {
     };
 
     return {
-      access_token: await this.jwtService.signAsync(payload, jwtConstants),
+      accessToken: await this.jwtService.signAsync(payload, jwtConstants),
     };
   }
 }
