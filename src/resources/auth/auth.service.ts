@@ -24,14 +24,12 @@ export class AuthService {
       throw new UnauthorizedException('User or password does not match');
     }
 
-    if (!this.hash.compareHash(loginDto.password, user.password)) {
+    if (!(await this.hash.compareHash(loginDto.password, user.password))) {
       throw new UnauthorizedException('User or password does not match');
     }
 
     const payload = {
-      sub: user.id,
-      username: user.username,
-      email: user.email,
+      sub: { id: user.id, username: user.username, email: user.email },
     };
 
     return {
