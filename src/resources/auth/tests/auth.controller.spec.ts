@@ -36,4 +36,12 @@ describe('AuthController', () => {
       expect(userLogin).toEqual(returnLoginMock);
     });
   });
+
+  describe('user logout service', () => {
+    it('should return an access token', async () => {
+      const userLogin = await controller.login(userLoginMock);
+
+      expect(userLogin).toEqual(returnLoginMock);
+    });
+  });
 });

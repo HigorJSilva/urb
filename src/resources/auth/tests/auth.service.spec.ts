@@ -11,6 +11,7 @@ import { UsersService } from 'src/resources/users/users.service';
 import { userEntityMock } from 'src/resources/users/tests/mocks/users_mocks';
 import { IHashProvider } from 'src/shared/interfaces/hash.provider';
 import { UnauthorizedException } from '@nestjs/common';
+import { jwtConstants } from 'src/shared/config/auth/constants';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -68,6 +69,18 @@ describe('AuthService', () => {
       expect(service.login(WrongPasswordLoginMock)).rejects.toThrowError(
         new UnauthorizedException('User or password does not match'),
       );
+    });
+  });
+
+  describe('user logout service', () => {
+    it('should return an invalid access token if succeeds', async () => {
+      const response = await service.login(userLoginMock);
+
+      const auth = await service.logout(response.accessToken);
+
+      expect(
+        jwtService.verifyAsync(auth.accessToken, jwtConstants),
+      ).rejects.toThrow('jwt expired');
     });
   });
 });
