@@ -37,4 +37,15 @@ export class AuthService {
       accessToken: await this.jwtService.signAsync(payload, jwtConstants),
     };
   }
+
+  async logout(auth: string): Promise<ReturnLoginDto> {
+    const jwt = await this.jwtService.decode(auth.replace('Bearer ', ''));
+
+    return {
+      accessToken: await this.jwtService.signAsync(jwt.sub, {
+        secret: jwtConstants.secret,
+        expiresIn: '1ms',
+      }),
+    };
+  }
 }
