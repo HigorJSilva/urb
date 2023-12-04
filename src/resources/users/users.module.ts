@@ -9,5 +9,6 @@ import Bcrypt from 'src/shared/providers/hash/bcrypt';
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
   providers: [UsersService, Bcrypt],
+  exports: [UsersService],
 })
 export class UsersModule {}

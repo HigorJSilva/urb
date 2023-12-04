@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
-import { isUnique } from 'src/shared/decorator/unique';
 
-export class CreateUserDto {
+export class LoginDto {
   @ApiProperty({
     description: "User's email",
     required: true,
@@ -11,7 +10,6 @@ export class CreateUserDto {
   @IsEmail(undefined, {
     message: 'Must be a valid email address',
   })
-  @isUnique({ tableName: 'users', column: 'email' })
   email: string;
 
   @ApiProperty({
@@ -25,15 +23,4 @@ export class CreateUserDto {
   @MinLength(4)
   @MaxLength(20)
   password: string;
-
-  @ApiProperty({
-    description: "User's username",
-    maximum: 20,
-    minimum: 4,
-    required: true,
-  })
-  @IsString()
-  @MinLength(8)
-  @MaxLength(20)
-  username: string;
 }
