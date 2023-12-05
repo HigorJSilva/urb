@@ -1,9 +1,11 @@
+import { Addresses } from 'src/resources/addresses/entities/address.entity';
 import { States } from 'src/resources/states/entities/states';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -24,4 +26,7 @@ export class Cities {
   @ManyToOne(() => States, (state) => state.cities)
   @JoinColumn({ name: 'uf_id', referencedColumnName: 'id' })
   state: States;
+
+  @OneToMany(() => Addresses, (address) => address.city)
+  addresses: Addresses[];
 }
