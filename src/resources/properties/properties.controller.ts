@@ -22,8 +22,7 @@ export class PropertiesController {
     description: 'Unauthorized Error',
     schema: {
       example: {
-        message: 'User or password does not match',
-        error: 'Unauthorized',
+        message: 'Unauthorized',
         statuCode: 401,
       },
     },
