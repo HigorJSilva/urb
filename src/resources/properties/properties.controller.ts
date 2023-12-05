@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -29,8 +30,14 @@ export class PropertiesController {
   })
   @Post()
   @UseGuards(AuthGuard)
-  create(@Body() createPropertyDto: CreatePropertyDto) {
-    return this.propertiesService.create(createPropertyDto);
+  create(
+    @Body() createPropertyDto: CreatePropertyDto,
+    @Headers('user') request: any,
+  ) {
+    return this.propertiesService.create({
+      ...createPropertyDto,
+      userId: request.sub.id,
+    });
   }
 
   @Get()

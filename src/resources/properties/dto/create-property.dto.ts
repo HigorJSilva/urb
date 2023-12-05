@@ -15,4 +15,10 @@ export class CreatePropertyDto {
     required: true,
   })
   address: Addresses;
+
+  @ApiProperty({
+    description: "User's id",
+    required: true,
+  })
+  userId: string;
 }

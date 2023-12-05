@@ -13,10 +13,7 @@ export class PropertiesService {
   ) {}
 
   create(createPropertyDto: CreatePropertyDto) {
-    return this.propertyRepository.save({
-      ...createPropertyDto,
-      userId: '624811b5-2aad-4ca5-b412-af213890a0b0',
-    });
+    return this.propertyRepository.save(createPropertyDto);
   }
 
   findAll() {
