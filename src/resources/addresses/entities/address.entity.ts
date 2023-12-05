@@ -15,7 +15,7 @@ export class Addresses {
   @Column({ name: 'add_line', nullable: true })
   addLine: string;
 
-  @Column({ name: 'zipCode', nullable: false })
+  @Column({ name: 'zip_code', nullable: false })
   zipCode: string;
 
   @Column({ name: 'city_id', nullable: false })
