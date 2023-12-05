@@ -2,12 +2,7 @@ import { Controller, Post, Body, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ReturnLoginDto } from './dto/returnLogin';
-import {
-  ApiOkResponse,
-  ApiUnauthorizedResponse,
-  getSchemaPath,
-} from '@nestjs/swagger';
-import { ErrorDto } from 'src/shared/dtos/errorDto';
+import { ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 @Controller()
 export class AuthController {
@@ -20,7 +15,6 @@ export class AuthController {
   @ApiUnauthorizedResponse({
     description: 'Unauthorized Error',
     schema: {
-      $ref: getSchemaPath(ErrorDto),
       example: {
         message: 'User or password does not match',
         error: 'Unauthorized',
