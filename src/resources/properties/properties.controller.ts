@@ -6,13 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/shared/config/auth/auth.guard';
 
 @Controller('properties')
+@ApiBearerAuth('JWT-auth')
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
   @ApiUnauthorizedResponse({
@@ -26,6 +29,7 @@ export class PropertiesController {
     },
   })
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() createPropertyDto: CreatePropertyDto) {
     return this.propertiesService.create(createPropertyDto);
   }

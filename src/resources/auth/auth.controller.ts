@@ -2,7 +2,11 @@ import { Controller, Post, Body, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ReturnLoginDto } from './dto/returnLogin';
-import { ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @Controller()
 export class AuthController {
@@ -32,6 +36,7 @@ export class AuthController {
     type: ReturnLoginDto,
   })
   @Post('/logout')
+  @ApiBearerAuth('JWT-auth')
   async logout(
     @Headers('Authorization') auth: string,
   ): Promise<ReturnLoginDto> {
