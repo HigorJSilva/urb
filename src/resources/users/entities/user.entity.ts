@@ -16,5 +16,5 @@ export class User {
   username: string;
 
   @OneToMany(() => Property, (property) => property.user)
-  properties: Property[];
+  properties?: Property[];
 }
