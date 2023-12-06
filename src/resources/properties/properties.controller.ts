@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Headers,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -22,6 +24,7 @@ import { ReturnPropertyDto } from './dto/return-property.dto';
 
 @Controller('properties')
 @ApiBearerAuth('JWT-auth')
+@UseGuards(AuthGuard)
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
   @ApiOkResponse({
@@ -37,7 +40,6 @@ export class PropertiesController {
     },
   })
   @Post()
-  @UseGuards(AuthGuard)
   create(
     @Body() createPropertyDto: CreatePropertyDto,
     @Headers('user') request: any,
