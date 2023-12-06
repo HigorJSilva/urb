@@ -12,13 +12,21 @@ import {
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/config/auth/auth.guard';
+import { ReturnPropertyDto } from './dto/return-property.dto';
 
 @Controller('properties')
 @ApiBearerAuth('JWT-auth')
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
+  @ApiOkResponse({
+    type: ReturnPropertyDto,
+  })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized Error',
     schema: {

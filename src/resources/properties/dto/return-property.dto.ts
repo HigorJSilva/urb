@@ -1,19 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MinLength } from 'class-validator';
 import { Addresses } from 'src/resources/addresses/entities/address.entity';
 
-export class CreatePropertyDto {
+export class ReturnPropertyDto {
+  id: string;
   @ApiProperty({
     description: "Property's title",
-    required: true,
+    nullable: false,
   })
-  @IsString()
-  @MinLength(4)
   title: string;
   @ApiProperty({
     description: "Property's address",
-    required: true,
+    nullable: false,
   })
   address: Addresses;
+  @ApiProperty({
+    description: "Property's user id",
+    nullable: false,
+  })
   userId: string;
+  @ApiProperty({
+    description: "Property's address id",
+    nullable: false,
+  })
+  addressId: string;
 }
