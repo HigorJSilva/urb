@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PropertiesController } from '../properties.controller';
 import { PropertiesService } from '../properties.service';
-import { createProperty, returnedProperty } from './mocks/properties.mocks';
+import {
+  createProperty,
+  returnedProperty,
+  userPropertiesMock,
+} from './mocks/properties.mocks';
 import { JwtService } from '@nestjs/jwt';
 
 describe('PropertiesController', () => {
@@ -17,6 +21,7 @@ describe('PropertiesController', () => {
           provide: PropertiesService,
           useValue: {
             create: jest.fn().mockResolvedValue(returnedProperty),
+            findAll: jest.fn().mockResolvedValue(userPropertiesMock),
           },
         },
       ],
@@ -37,6 +42,21 @@ describe('PropertiesController', () => {
         sub: { id: 'c851d369-031f-49b2-8460-a5d0c6c2661d' },
       });
       expect(response).toEqual(returnedProperty);
+    });
+  });
+
+  describe('list properties by user service', () => {
+    it('should return the list of all propertis from a user', async () => {
+      const response = await controller.findAll(createProperty.userId);
+
+      expect(response).toEqual(userPropertiesMock);
+    });
+
+    it('should return the an empty list of propertis if a user has no properties created', async () => {
+      jest.spyOn(propertyService, 'findAll').mockResolvedValueOnce([]);
+      const response = await controller.findAll(createProperty.userId);
+
+      expect(response).toEqual([]);
     });
   });
 });
