@@ -3,7 +3,7 @@ import { PropertiesService } from '../properties.service';
 import { Property } from '../entities/property.entity';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { createProperty } from './mocks/properties.mocks';
+import { createProperty, returnedProperty } from './mocks/properties.mocks';
 
 describe('PropertiesService', () => {
   let service: PropertiesService;
@@ -16,7 +16,7 @@ describe('PropertiesService', () => {
         {
           provide: getRepositoryToken(Property),
           useValue: {
-            save: jest.fn().mockResolvedValue(createProperty),
+            save: jest.fn().mockResolvedValue(returnedProperty),
           },
         },
       ],
@@ -31,5 +31,12 @@ describe('PropertiesService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
     expect(propertyRepository).toBeDefined();
+  });
+
+  describe('create property service', () => {
+    it('should return the access token if succeeds', async () => {
+      const response = await service.create(createProperty);
+      expect(response).toEqual(returnedProperty);
+    });
   });
 });
