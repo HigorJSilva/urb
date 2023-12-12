@@ -48,7 +48,7 @@ export class PropertiesService {
       relations: { address: true },
     });
 
-    if (!properties) {
+    if (!properties.length) {
       throw new NotFoundException(`User has no properties yet`);
     }
 
