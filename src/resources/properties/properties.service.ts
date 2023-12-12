@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,8 +16,16 @@ export class PropertiesService {
     return this.propertyRepository.save(createPropertyDto);
   }
 
-  findAll() {
-    return `This action returns all properties`;
+  async findAll(userId: string) {
+    const userProperties = await this.findPropertyByUserId(userId).catch(
+      () => undefined,
+    );
+
+    if (!userProperties) {
+      return [];
+    }
+
+    return userProperties;
   }
 
   findOne(id: number) {
@@ -30,5 +38,20 @@ export class PropertiesService {
 
   remove(id: number) {
     return `This action removes a #${id} property`;
+  }
+
+  async findPropertyByUserId(userId: string): Promise<Property[]> {
+    const properties = await this.propertyRepository.find({
+      where: {
+        userId: userId,
+      },
+      relations: { address: true },
+    });
+
+    if (!properties) {
+      throw new NotFoundException(`User has no properties yet`);
+    }
+
+    return properties;
   }
 }

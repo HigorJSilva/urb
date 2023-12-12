@@ -8,8 +8,6 @@ import {
   Delete,
   UseGuards,
   Headers,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -50,9 +48,22 @@ export class PropertiesController {
     });
   }
 
+  @ApiOkResponse({
+    type: ReturnPropertyDto,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
   @Get()
-  findAll() {
-    return this.propertiesService.findAll();
+  findAll(@Headers('user') request: any) {
+    return this.propertiesService.findAll(request.sub.id);
   }
 
   @Get(':id')
