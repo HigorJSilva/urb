@@ -38,8 +38,8 @@ export class Addresses {
 
   @ManyToOne(() => Cities, (city) => city.addresses)
   @JoinColumn({ name: 'city_id', referencedColumnName: 'id' })
-  city: Cities;
+  city?: Cities;
 
   @OneToOne(() => Property, (property) => property.address)
-  property: Property;
+  property?: Property;
 }
