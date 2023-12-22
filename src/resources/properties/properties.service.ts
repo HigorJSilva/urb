@@ -32,8 +32,18 @@ export class PropertiesService {
     return await this.findPropertyByIdandUserId(id, userId);
   }
 
-  update(id: number, updatePropertyDto: UpdatePropertyDto) {
-    return `This action updates a #${id} property`;
+  async update(
+    id: string,
+    userId: string,
+    updatePropertyDto: UpdatePropertyDto,
+  ): Promise<Property> {
+    const property = await this.findPropertyByIdandUserId(id, userId);
+
+    if (!property) {
+      throw new NotFoundException('Property not found');
+    }
+
+    return this.propertyRepository.save({ ...property, ...updatePropertyDto });
   }
 
   remove(id: number) {

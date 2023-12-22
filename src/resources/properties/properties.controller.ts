@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
   Headers,
+  Put,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -93,12 +93,34 @@ export class PropertiesController {
     return this.propertiesService.findOne(id, request.sub.id);
   }
 
-  @Patch(':id')
+  @ApiOkResponse({
+    type: ReturnPropertyDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Property not found',
+    schema: {
+      example: {
+        message: 'Property not found',
+        statuCode: 404,
+      },
+    },
+  })
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updatePropertyDto: UpdatePropertyDto,
+    @Headers('user') request: any,
   ) {
-    return this.propertiesService.update(+id, updatePropertyDto);
+    return this.propertiesService.update(id, request.sub.id, updatePropertyDto);
   }
 
   @Delete(':id')
