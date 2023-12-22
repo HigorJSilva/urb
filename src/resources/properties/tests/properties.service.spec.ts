@@ -8,6 +8,7 @@ import {
   returnedProperty,
   userPropertiesMock,
 } from './mocks/properties.mocks';
+import { NotFoundException } from '@nestjs/common';
 
 describe('PropertiesService', () => {
   let service: PropertiesService;
@@ -22,6 +23,7 @@ describe('PropertiesService', () => {
           useValue: {
             save: jest.fn().mockResolvedValue(returnedProperty),
             find: jest.fn().mockResolvedValue(userPropertiesMock),
+            findOne: jest.fn().mockResolvedValue(userPropertiesMock[0]),
           },
         },
       ],
@@ -57,6 +59,27 @@ describe('PropertiesService', () => {
       const response = await service.findAll(createProperty.userId);
 
       expect(response).toEqual([]);
+    });
+  });
+
+  describe('list property by id service', () => {
+    it('should return the property given an id', async () => {
+      const response = await service.findOne(
+        userPropertiesMock[0].id,
+        createProperty.userId,
+      );
+
+      expect(response).toEqual(userPropertiesMock[0]);
+    });
+
+    it('should return a Not Found Exception if property not found', async () => {
+      jest.spyOn(propertyRepository, 'findOne').mockResolvedValueOnce(null);
+
+      const notFoundException = new NotFoundException('Property not found');
+
+      await expect(
+        service.findOne('invalidId', createProperty.userId),
+      ).rejects.toEqual(notFoundException);
     });
   });
 });

@@ -7,6 +7,7 @@ import {
   userPropertiesMock,
 } from './mocks/properties.mocks';
 import { JwtService } from '@nestjs/jwt';
+import { NotFoundException } from '@nestjs/common';
 
 describe('PropertiesController', () => {
   let controller: PropertiesController;
@@ -22,6 +23,7 @@ describe('PropertiesController', () => {
           useValue: {
             create: jest.fn().mockResolvedValue(returnedProperty),
             findAll: jest.fn().mockResolvedValue(userPropertiesMock),
+            findOne: jest.fn().mockResolvedValue(userPropertiesMock[0]),
           },
         },
       ],
@@ -57,6 +59,28 @@ describe('PropertiesController', () => {
       const response = await controller.findAll(createProperty.userId);
 
       expect(response).toEqual([]);
+    });
+  });
+
+  describe('list property by id service', () => {
+    it('should return the property given an id', async () => {
+      const response = await controller.findOne(
+        userPropertiesMock[0].id,
+        createProperty.userId,
+      );
+
+      expect(response).toEqual(userPropertiesMock[0]);
+    });
+
+    it('should return a Not Found Exception if property not found', async () => {
+      const notFoundException = new NotFoundException('Property not found');
+      jest
+        .spyOn(propertyService, 'findOne')
+        .mockRejectedValue(notFoundException);
+
+      await expect(
+        controller.findOne(userPropertiesMock[0].id, createProperty.userId),
+      ).rejects.toEqual(notFoundException);
     });
   });
 });
