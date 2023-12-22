@@ -123,8 +123,29 @@ export class PropertiesController {
     return this.propertiesService.update(id, request.sub.id, updatePropertyDto);
   }
 
+  @ApiOkResponse({
+    type: ReturnPropertyDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Property not found',
+    schema: {
+      example: {
+        message: 'Property not found',
+        statuCode: 404,
+      },
+    },
+  })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.propertiesService.remove(+id);
+  remove(@Param('id') id: string, @Headers('user') request: any) {
+    return this.propertiesService.remove(id, request.sub.id);
   }
 }

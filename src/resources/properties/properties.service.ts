@@ -46,8 +46,11 @@ export class PropertiesService {
     return this.propertyRepository.save({ ...property, ...updatePropertyDto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} property`;
+  async remove(id: string, userId: string) {
+    const property = await this.findPropertyByIdandUserId(id, userId);
+    await this.propertyRepository.delete({ id: property.id });
+
+    return;
   }
 
   async findPropertyByUserId(userId: string): Promise<Property[]> {
