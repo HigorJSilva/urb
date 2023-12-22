@@ -6,6 +6,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import {
   createProperty,
   returnedProperty,
+  updatedProperty,
+  updatedReturnedProperty,
   userPropertiesMock,
 } from './mocks/properties.mocks';
 import { NotFoundException } from '@nestjs/common';
@@ -24,6 +26,7 @@ describe('PropertiesService', () => {
             save: jest.fn().mockResolvedValue(returnedProperty),
             find: jest.fn().mockResolvedValue(userPropertiesMock),
             findOne: jest.fn().mockResolvedValue(userPropertiesMock[0]),
+            update: jest.fn().mockResolvedValue(updatedReturnedProperty),
           },
         },
       ],
@@ -79,6 +82,37 @@ describe('PropertiesService', () => {
 
       await expect(
         service.findOne('invalidId', createProperty.userId),
+      ).rejects.toEqual(notFoundException);
+    });
+  });
+
+  describe('update property service', () => {
+    it('should return the updated property if succeeds', async () => {
+      jest
+        .spyOn(propertyRepository, 'save')
+        .mockResolvedValueOnce(updatedProperty as Property);
+
+      const response = await service.update(
+        userPropertiesMock[0].id,
+        updatedProperty.userId,
+        updatedProperty,
+      );
+
+      expect(response).toHaveProperty('title', updatedProperty.title);
+      expect(response).toHaveProperty('address', updatedProperty.address);
+    });
+
+    it('should return a Not Found Exception if property not found', async () => {
+      jest.spyOn(propertyRepository, 'findOne').mockResolvedValueOnce(null);
+
+      const notFoundException = new NotFoundException('Property not found');
+
+      await expect(
+        service.update(
+          userPropertiesMock[0].id,
+          updatedProperty.userId,
+          updatedProperty,
+        ),
       ).rejects.toEqual(notFoundException);
     });
   });

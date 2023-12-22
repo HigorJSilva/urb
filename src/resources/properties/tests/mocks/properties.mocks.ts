@@ -2,6 +2,7 @@ import { Addresses } from 'src/resources/addresses/entities/address.entity';
 import { CreatePropertyDto } from '../../dto/create-property.dto';
 import { ReturnPropertyDto } from '../../dto/return-property.dto';
 import { Property } from '../../entities/property.entity';
+import { UpdatePropertyDto } from '../../dto/update-property.dto';
 
 export const createProperty: CreatePropertyDto = {
   title: 'property tittle',
@@ -64,3 +65,26 @@ export const userPropertiesMock: Property[] = [
     },
   },
 ] as Property[];
+
+export const updatedProperty: UpdatePropertyDto = {
+  title: 'new property tittle',
+  address: {
+    addLine: 'new street name, new block new number',
+    zipCode: '99999999',
+    cityId: '0002b482-0c11-41a2-873b-409c825ac1cd',
+  },
+  userId: 'c851d369-031f-49b2-8460-a5d0c6c2661d',
+} as UpdatePropertyDto;
+
+export const updatedReturnedProperty: Property = {
+  title: 'new property tittle',
+  address: {
+    addLine: 'new street name, new block new number',
+    zipCode: '99999999',
+    cityId: '0002b482-0c11-41a2-873b-409c825ac1cd',
+    id: 'd41d6807-bcdb-491d-8383-8d8ee7d5dec4',
+  } as Addresses,
+  userId: 'fb034dcf-80d4-474a-a125-3a3e1e7cddf6',
+  addressId: 'd41d6807-bcdb-491d-8383-8d8ee7d5dec4',
+  id: 'c851d369-031f-49b2-8460-a5d0c6c2661d',
+} as Property;

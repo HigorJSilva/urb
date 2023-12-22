@@ -4,10 +4,13 @@ import { PropertiesService } from '../properties.service';
 import {
   createProperty,
   returnedProperty,
+  updatedProperty,
+  updatedReturnedProperty,
   userPropertiesMock,
 } from './mocks/properties.mocks';
 import { JwtService } from '@nestjs/jwt';
 import { NotFoundException } from '@nestjs/common';
+import { Property } from '../entities/property.entity';
 
 describe('PropertiesController', () => {
   let controller: PropertiesController;
@@ -24,6 +27,7 @@ describe('PropertiesController', () => {
             create: jest.fn().mockResolvedValue(returnedProperty),
             findAll: jest.fn().mockResolvedValue(userPropertiesMock),
             findOne: jest.fn().mockResolvedValue(userPropertiesMock[0]),
+            update: jest.fn().mockResolvedValue(updatedReturnedProperty),
           },
         },
       ],
@@ -80,6 +84,41 @@ describe('PropertiesController', () => {
 
       await expect(
         controller.findOne(userPropertiesMock[0].id, createProperty.userId),
+      ).rejects.toEqual(notFoundException);
+    });
+  });
+
+  describe('update property service', () => {
+    it('should return the updated property if succeeds', async () => {
+      const response = await controller.update(
+        userPropertiesMock[0].id,
+        updatedProperty,
+        updatedProperty.userId,
+      );
+
+      jest
+        .spyOn(propertyService, 'update')
+        .mockResolvedValueOnce(updatedProperty as Property);
+
+      expect(response).toHaveProperty('title', updatedProperty.title);
+      expect(response).toHaveProperty(
+        'address.addLine',
+        updatedProperty.address.addLine,
+      );
+    });
+
+    it('should return a Not Found Exception if property not found', async () => {
+      const notFoundException = new NotFoundException('Property not found');
+      jest
+        .spyOn(propertyService, 'update')
+        .mockRejectedValueOnce(notFoundException);
+
+      await expect(
+        controller.update(
+          userPropertiesMock[0].id,
+          updatedProperty,
+          updatedProperty.userId,
+        ),
       ).rejects.toEqual(notFoundException);
     });
   });
