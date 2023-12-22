@@ -28,6 +28,7 @@ describe('PropertiesController', () => {
             findAll: jest.fn().mockResolvedValue(userPropertiesMock),
             findOne: jest.fn().mockResolvedValue(userPropertiesMock[0]),
             update: jest.fn().mockResolvedValue(updatedReturnedProperty),
+            remove: jest.fn().mockResolvedValue(undefined),
           },
         },
       ],
@@ -119,6 +120,27 @@ describe('PropertiesController', () => {
           updatedProperty,
           updatedProperty.userId,
         ),
+      ).rejects.toEqual(notFoundException);
+    });
+  });
+
+  describe('update property service', () => {
+    it('should return undefined if succeeds', async () => {
+      const response = await controller.remove(
+        userPropertiesMock[0].id,
+        updatedProperty.userId,
+      );
+      expect(response).toBe(undefined);
+    });
+
+    it('should return a Not Found Exception if property not found', async () => {
+      const notFoundException = new NotFoundException('Property not found');
+      jest
+        .spyOn(propertyService, 'remove')
+        .mockRejectedValueOnce(notFoundException);
+
+      await expect(
+        controller.remove(userPropertiesMock[0].id, updatedProperty.userId),
       ).rejects.toEqual(notFoundException);
     });
   });
