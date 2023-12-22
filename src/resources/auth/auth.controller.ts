@@ -5,10 +5,12 @@ import { ReturnLoginDto } from './dto/returnLogin';
 import {
   ApiBearerAuth,
   ApiOkResponse,
+  ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 @Controller()
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

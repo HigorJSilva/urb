@@ -16,12 +16,14 @@ import {
   ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/config/auth/auth.guard';
 import { ReturnPropertyDto } from './dto/return-property.dto';
 
 @Controller('properties')
+@ApiTags('Properties')
 @ApiBearerAuth('JWT-auth')
 @UseGuards(AuthGuard)
 export class PropertiesController {
