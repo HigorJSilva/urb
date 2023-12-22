@@ -3,13 +3,14 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ReturnLoginDto } from './dto/returnLogin';
 import {
+  ApiBearerAuth,
   ApiOkResponse,
+  ApiTags,
   ApiUnauthorizedResponse,
-  getSchemaPath,
 } from '@nestjs/swagger';
-import { ErrorDto } from 'src/shared/dtos/errorDto';
 
 @Controller()
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -20,7 +21,6 @@ export class AuthController {
   @ApiUnauthorizedResponse({
     description: 'Unauthorized Error',
     schema: {
-      $ref: getSchemaPath(ErrorDto),
       example: {
         message: 'User or password does not match',
         error: 'Unauthorized',
@@ -38,6 +38,7 @@ export class AuthController {
     type: ReturnLoginDto,
   })
   @Post('/logout')
+  @ApiBearerAuth('JWT-auth')
   async logout(
     @Headers('Authorization') auth: string,
   ): Promise<ReturnLoginDto> {
