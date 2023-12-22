@@ -14,6 +14,7 @@ import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import {
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -66,9 +67,30 @@ export class PropertiesController {
     return this.propertiesService.findAll(request.sub.id);
   }
 
+  @ApiOkResponse({
+    type: ReturnPropertyDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Property not found',
+    schema: {
+      example: {
+        message: 'Property not found',
+        statuCode: 404,
+      },
+    },
+  })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.propertiesService.findOne(+id);
+  findOne(@Param('id') id: string, @Headers('user') request: any) {
+    return this.propertiesService.findOne(id, request.sub.id);
   }
 
   @Patch(':id')

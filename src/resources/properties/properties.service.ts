@@ -28,8 +28,8 @@ export class PropertiesService {
     return userProperties;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} property`;
+  async findOne(id: string, userId) {
+    return await this.findPropertyByIdandUserId(id, userId);
   }
 
   update(id: number, updatePropertyDto: UpdatePropertyDto) {
@@ -50,6 +50,25 @@ export class PropertiesService {
 
     if (!properties.length) {
       throw new NotFoundException(`User has no properties yet`);
+    }
+
+    return properties;
+  }
+
+  async findPropertyByIdandUserId(
+    id: string,
+    userId: string,
+  ): Promise<Property> {
+    const properties = await this.propertyRepository.findOne({
+      where: {
+        id,
+        userId,
+      },
+      relations: { address: true },
+    });
+
+    if (!properties) {
+      throw new NotFoundException('Property not found');
     }
 
     return properties;
