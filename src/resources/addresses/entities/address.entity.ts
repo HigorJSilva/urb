@@ -38,6 +38,10 @@ export class Addresses {
 
   @ManyToOne(() => Cities, (city) => city.addresses)
   @JoinColumn({ name: 'city_id', referencedColumnName: 'id' })
+  @ApiProperty({
+    description: 'City info',
+    required: true,
+  })
   city?: Cities;
 
   @OneToOne(() => Property, (property) => property.address)
