@@ -4,9 +4,37 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Property } from './entities/property.entity';
 import { Repository } from 'typeorm';
+import {
+  FilterOperator,
+  NO_PAGINATION,
+  PaginateConfig,
+  PaginateQuery,
+  Paginated,
+  paginate,
+} from 'nestjs-paginate';
 
 @Injectable()
 export class PropertiesService {
+  public static paginateConfig: PaginateConfig<Property> = {
+    sortableColumns: [
+      'id',
+      'title',
+      'address.(city.name)',
+      'address.(city.state)',
+    ],
+    nullSort: 'last',
+    defaultSortBy: [['id', 'DESC']],
+    searchableColumns: ['title'],
+    relations: { address: { city: true } },
+    maxLimit: NO_PAGINATION,
+    filterableColumns: {
+      title: [FilterOperator.ILIKE],
+      'address.city.name': [FilterOperator.ILIKE],
+      'address.city.state': [FilterOperator.ILIKE],
+      user_id: [FilterOperator.EQ],
+    },
+  };
+
   constructor(
     @InjectRepository(Property)
     private readonly propertyRepository: Repository<Property>,
@@ -16,16 +44,12 @@ export class PropertiesService {
     return this.propertyRepository.save(createPropertyDto);
   }
 
-  async findAll(userId: string) {
-    const userProperties = await this.findPropertyByUserId(userId).catch(
-      () => undefined,
+  async findAll(query: PaginateQuery): Promise<Paginated<Property>> {
+    return paginate(
+      query,
+      this.propertyRepository,
+      PropertiesService.paginateConfig,
     );
-
-    if (!userProperties) {
-      return [];
-    }
-
-    return userProperties;
   }
 
   async findOne(id: string, userId) {
