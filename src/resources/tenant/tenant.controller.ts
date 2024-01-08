@@ -14,6 +14,7 @@ import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import {
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -56,9 +57,30 @@ export class TenantController {
     return this.tenantService.findAll();
   }
 
+  @ApiOkResponse({
+    type: ReturnTenantDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Tenant not found',
+    schema: {
+      example: {
+        message: 'Tenant not found',
+        statuCode: 404,
+      },
+    },
+  })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tenantService.findOne(+id);
+  findOne(@Param('id') id: string, @Headers('user') request: any) {
+    return this.tenantService.findOne(id, request.sub.id);
   }
 
   @Patch(':id')
