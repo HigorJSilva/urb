@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import {
   createProperty,
+  emptyFindAllQueryResponse,
+  findAllQuery,
   returnedProperty,
   updatedProperty,
   updatedReturnedProperty,
@@ -53,16 +55,16 @@ describe('PropertiesService', () => {
 
   describe('list properties by user service', () => {
     it('should return the list of all propertis from a user', async () => {
-      const response = await service.findAll(createProperty.userId);
+      const response = await service.findAll(findAllQuery);
 
       expect(response).toEqual(userPropertiesMock);
     });
 
     it('should return the an empty list of propertis if a user has no properties created', async () => {
       jest.spyOn(propertyRepository, 'find').mockResolvedValueOnce([]);
-      const response = await service.findAll(createProperty.userId);
+      const response = await service.findAll(findAllQuery);
 
-      expect(response).toEqual([]);
+      expect(response).toEqual(emptyFindAllQueryResponse);
     });
   });
 
