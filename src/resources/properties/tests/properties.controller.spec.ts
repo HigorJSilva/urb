@@ -3,6 +3,8 @@ import { PropertiesController } from '../properties.controller';
 import { PropertiesService } from '../properties.service';
 import {
   createProperty,
+  emptyFindAllQueryResponse,
+  findAllQuery,
   returnedProperty,
   updatedProperty,
   updatedReturnedProperty,
@@ -54,16 +56,24 @@ describe('PropertiesController', () => {
 
   describe('list properties by user service', () => {
     it('should return the list of all propertis from a user', async () => {
-      const response = await controller.findAll(createProperty.userId);
+      const response = await controller.findAll(
+        createProperty.userId,
+        findAllQuery,
+      );
 
       expect(response).toEqual(userPropertiesMock);
     });
 
     it('should return the an empty list of propertis if a user has no properties created', async () => {
-      jest.spyOn(propertyService, 'findAll').mockResolvedValueOnce([]);
-      const response = await controller.findAll(createProperty.userId);
+      jest
+        .spyOn(propertyService, 'findAll')
+        .mockResolvedValueOnce(emptyFindAllQueryResponse);
+      const response = await controller.findAll(
+        createProperty.userId,
+        findAllQuery,
+      );
 
-      expect(response).toEqual([]);
+      expect(response).toEqual(emptyFindAllQueryResponse);
     });
   });
 
