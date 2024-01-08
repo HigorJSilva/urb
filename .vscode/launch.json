@@ -10,11 +10,10 @@
             "restart": true,
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "/app",
-            "sourceMapPathOverrides": {
-                "meteor://💻app/*": "${workspaceFolder}/*",
-                "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
-                "webpack://?:*/*": "${workspaceFolder}/*"
-            },
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/src",
+                "!/node_modules/**"
+            ],
         }
     ]
 }
