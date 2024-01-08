@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { Repository } from 'typeorm';
@@ -10,19 +10,19 @@ import { ReturnTenantDto } from './dto/return-tunant.dto';
 export class TenantService {
   constructor(
     @InjectRepository(Tenant)
-    private readonly TenantRepository: Repository<Tenant>,
+    private readonly tenantRepository: Repository<Tenant>,
   ) {}
 
   async create(createTenantDto: CreateTenantDto): Promise<ReturnTenantDto> {
-    return await this.TenantRepository.save(createTenantDto);
+    return await this.tenantRepository.save(createTenantDto);
   }
 
   findAll() {
     return `This action returns all tenant`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tenant`;
+  async findOne(id: string, userId: string) {
+    return await this.getTenantByUserandId(id, userId);
   }
 
   update(id: number, updateTenantDto: UpdateTenantDto) {
@@ -31,5 +31,18 @@ export class TenantService {
 
   remove(id: number) {
     return `This action removes a #${id} tenant`;
+  }
+
+  async getTenantByUserandId(id: string, userId: string): Promise<Tenant> {
+    const tenant = await this.tenantRepository.findOneBy({
+      id,
+      userId,
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    return tenant;
   }
 }
