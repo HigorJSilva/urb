@@ -16,3 +16,5 @@ export const returnedTenant: ReturnTenantDto = {
   email: null,
   fone: null,
 };
+
+export const mockRequest = { sub: { id: createTenant.userId } };
