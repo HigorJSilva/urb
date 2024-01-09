@@ -17,16 +17,26 @@ export class TenantService {
     return await this.tenantRepository.save(createTenantDto);
   }
 
-  findAll() {
-    return `This action returns all tenant`;
+  async findAll() {
+    return await this.tenantRepository.find();
   }
 
   async findOne(id: string, userId: string) {
     return await this.getTenantByUserandId(id, userId);
   }
 
-  update(id: number, updateTenantDto: UpdateTenantDto) {
-    return `This action updates a #${id} tenant`;
+  async update(
+    id: string,
+    userId: string,
+    updateTenantDto: UpdateTenantDto,
+  ): Promise<ReturnTenantDto> {
+    const tenant = await this.getTenantByUserandId(id, userId);
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    return await this.tenantRepository.save({ ...tenant, ...updateTenantDto });
   }
 
   remove(id: number) {
