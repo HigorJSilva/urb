@@ -5,6 +5,8 @@ import {
   createTenant,
   mockRequest,
   returnedTenant,
+  updateTenantDto,
+  updatedTenant,
 } from './mocks/tenant.mocks';
 import { JwtService } from '@nestjs/jwt';
 import { NotFoundException } from '@nestjs/common';
@@ -23,6 +25,7 @@ describe('TenantController', () => {
           useValue: {
             create: jest.fn().mockResolvedValue(returnedTenant),
             findOne: jest.fn().mockResolvedValue(returnedTenant),
+            update: jest.fn().mockResolvedValue(updatedTenant),
           },
         },
       ],
@@ -59,6 +62,32 @@ describe('TenantController', () => {
 
       await expect(
         controller.findOne(returnedTenant.id, mockRequest),
+      ).rejects.toEqual(notFoundException);
+    });
+  });
+
+  describe('update tenant service', () => {
+    it('should return the updated tenant if succeeds', async () => {
+      const response = await controller.update(
+        returnedTenant.id,
+        mockRequest,
+        updateTenantDto,
+      );
+
+      jest.spyOn(tenantService, 'update').mockResolvedValueOnce(updatedTenant);
+
+      expect(response).toHaveProperty('name', updateTenantDto.name);
+      expect(response).toHaveProperty('email', updateTenantDto.email);
+    });
+
+    it('should return a Not Found Exception if tenant not found', async () => {
+      const notFoundException = new NotFoundException('Tenant not found');
+      jest
+        .spyOn(tenantService, 'update')
+        .mockRejectedValueOnce(notFoundException);
+
+      await expect(
+        controller.update(returnedTenant.id, mockRequest, updateTenantDto),
       ).rejects.toEqual(notFoundException);
     });
   });
