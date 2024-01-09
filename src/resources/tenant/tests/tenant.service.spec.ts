@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TenantService } from '../tenant.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Tenant } from '../entities/tenant.entity';
-import { createTenant, returnedTenant } from './mocks/tenant.mocks';
+import {
+  createTenant,
+  returnedTenant,
+  updateTenantDto,
+  updatedTenant,
+} from './mocks/tenant.mocks';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 
@@ -59,6 +64,31 @@ describe('TenantService', () => {
 
       await expect(
         service.findOne('invalidId', createTenant.userId),
+      ).rejects.toEqual(notFoundException);
+    });
+  });
+
+  describe('update tenant service', () => {
+    it('should return the updated tenant if succeeds', async () => {
+      jest.spyOn(tenantRepository, 'save').mockResolvedValueOnce(updatedTenant);
+
+      const response = await service.update(
+        returnedTenant.id,
+        returnedTenant.userId,
+        updateTenantDto,
+      );
+
+      expect(response).toHaveProperty('name', updatedTenant.name);
+      expect(response).toHaveProperty('email', updatedTenant.email);
+    });
+
+    it('should return a Not Found Exception if tenant not found', async () => {
+      jest.spyOn(tenantRepository, 'findOneBy').mockResolvedValueOnce(null);
+
+      const notFoundException = new NotFoundException('Tenant not found');
+
+      await expect(
+        service.update(returnedTenant.id, updatedTenant.userId, updatedTenant),
       ).rejects.toEqual(notFoundException);
     });
   });
