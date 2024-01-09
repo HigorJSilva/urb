@@ -4,10 +4,10 @@ import {
   Post,
   Body,
   Headers,
-  Patch,
   Param,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { TenantService } from './tenant.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
@@ -83,9 +83,34 @@ export class TenantController {
     return this.tenantService.findOne(id, request.sub.id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTenantDto: UpdateTenantDto) {
-    return this.tenantService.update(+id, updateTenantDto);
+  @ApiOkResponse({
+    type: ReturnTenantDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Tenant not found',
+    schema: {
+      example: {
+        message: 'Tenant not found',
+        statuCode: 404,
+      },
+    },
+  })
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Headers('user') request: any,
+    @Body() updateTenantDto: UpdateTenantDto,
+  ): Promise<ReturnTenantDto> {
+    return this.tenantService.update(id, request.sub.id, updateTenantDto);
   }
 
   @Delete(':id')
