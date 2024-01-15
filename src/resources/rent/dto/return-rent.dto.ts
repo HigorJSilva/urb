@@ -1,7 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsDateString, IsDecimal, IsUUID } from 'class-validator';
 
-export class CreateRentDto {
+export class ReturnRentDto {
+  @ApiProperty({
+    description: 'Id of the rent',
+    required: true,
+  })
+  @IsUUID()
+  id: string;
+
+  @ApiProperty({
+    description: "Id of the user's rent",
+    required: true,
+  })
+  @IsUUID()
+  userId: string;
+
   @ApiProperty({
     description: 'Id of the property been rent',
     required: true,
@@ -48,6 +62,4 @@ export class CreateRentDto {
   })
   @IsDateString()
   endDate: Date;
-
-  userId: string;
 }

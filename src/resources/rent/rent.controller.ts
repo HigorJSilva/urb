@@ -1,15 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Headers,
+  UseGuards,
+} from '@nestjs/common';
 import { RentService } from './rent.service';
 import { CreateRentDto } from './dto/create-rent.dto';
 import { UpdateRentDto } from './dto/update-rent.dto';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { ReturnRentDto } from './dto/return-rent.dto';
+import { AuthGuard } from 'src/shared/config/auth/auth.guard';
 
 @Controller('rent')
+@ApiTags('Rents')
+@ApiBearerAuth('JWT-auth')
+@UseGuards(AuthGuard)
 export class RentController {
   constructor(private readonly rentService: RentService) {}
 
+  @ApiOkResponse({
+    type: ReturnRentDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
   @Post()
-  create(@Body() createRentDto: CreateRentDto) {
-    return this.rentService.create(createRentDto);
+  create(@Body() createRentDto: CreateRentDto, @Headers('user') request: any) {
+    return this.rentService.create({
+      ...createRentDto,
+      userId: request.sub.id,
+    });
   }
 
   @Get()
