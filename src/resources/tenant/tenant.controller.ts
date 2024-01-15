@@ -113,8 +113,27 @@ export class TenantController {
     return this.tenantService.update(id, request.sub.id, updateTenantDto);
   }
 
+  @ApiOkResponse({})
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Tenant not found',
+    schema: {
+      example: {
+        message: 'Tenant not found',
+        statuCode: 404,
+      },
+    },
+  })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tenantService.remove(+id);
+  remove(@Param('id') id: string, @Headers('user') request: any) {
+    return this.tenantService.remove(id, request.sub.id);
   }
 }
