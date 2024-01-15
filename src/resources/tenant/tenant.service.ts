@@ -39,8 +39,15 @@ export class TenantService {
     return await this.tenantRepository.save({ ...tenant, ...updateTenantDto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tenant`;
+  async remove(id: string, userId: string) {
+    const tenant = await this.getTenantByUserandId(id, userId);
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    await this.tenantRepository.delete({ id: tenant.id });
+    return;
   }
 
   async getTenantByUserandId(id: string, userId: string): Promise<Tenant> {
