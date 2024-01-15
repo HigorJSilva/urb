@@ -24,6 +24,7 @@ describe('TenantService', () => {
           useValue: {
             save: jest.fn().mockResolvedValue(returnedTenant),
             findOneBy: jest.fn().mockResolvedValue(returnedTenant),
+            delete: jest.fn().mockResolvedValue({ affected: 1 }),
           },
         },
       ],
@@ -89,6 +90,27 @@ describe('TenantService', () => {
 
       await expect(
         service.update(returnedTenant.id, updatedTenant.userId, updatedTenant),
+      ).rejects.toEqual(notFoundException);
+    });
+  });
+
+  describe('remove tenant service', () => {
+    it('should return undefined if succeeds', async () => {
+      const response = await service.remove(
+        returnedTenant.id,
+        returnedTenant.userId,
+      );
+
+      expect(response).toBe(undefined);
+    });
+
+    it('should return a Not Found Exception if tenant not found', async () => {
+      jest.spyOn(tenantRepository, 'findOneBy').mockResolvedValueOnce(null);
+
+      const notFoundException = new NotFoundException('Tenant not found');
+
+      await expect(
+        service.remove(returnedTenant.id, returnedTenant.userId),
       ).rejects.toEqual(notFoundException);
     });
   });
