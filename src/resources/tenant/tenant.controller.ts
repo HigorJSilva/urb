@@ -30,7 +30,7 @@ import {
 import { Tenant } from './entities/tenant.entity';
 
 @Controller('tenant')
-@ApiTags('Properties')
+@ApiTags('Tenants')
 @ApiBearerAuth('JWT-auth')
 @UseGuards(AuthGuard)
 export class TenantController {
