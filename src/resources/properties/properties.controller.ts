@@ -21,6 +21,13 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/config/auth/auth.guard';
 import { ReturnPropertyDto } from './dto/return-property.dto';
+import {
+  ApiOkPaginatedResponse,
+  Paginate,
+  PaginateQuery,
+  Paginated,
+} from 'nestjs-paginate';
+import { Property } from './entities/property.entity';
 
 @Controller('properties')
 @ApiTags('Properties')
@@ -51,10 +58,7 @@ export class PropertiesController {
     });
   }
 
-  @ApiOkResponse({
-    type: ReturnPropertyDto,
-    isArray: true,
-  })
+  @ApiOkPaginatedResponse(ReturnPropertyDto, PropertiesService.paginateConfig)
   @ApiUnauthorizedResponse({
     description: 'Unauthorized Error',
     schema: {
@@ -65,8 +69,14 @@ export class PropertiesController {
     },
   })
   @Get()
-  findAll(@Headers('user') request: any) {
-    return this.propertiesService.findAll(request.sub.id);
+  findAll(
+    @Headers('user') request: any,
+    @Paginate() query: PaginateQuery,
+  ): Promise<Paginated<Property>> {
+    query.filter = query.filter || {};
+    query.filter.user_id = request.sub.id;
+
+    return this.propertiesService.findAll(query);
   }
 
   @ApiOkResponse({
