@@ -5,9 +5,31 @@ import { Repository } from 'typeorm';
 import { Tenant } from './entities/tenant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReturnTenantDto } from './dto/return-tunant.dto';
+import {
+  FilterOperator,
+  NO_PAGINATION,
+  PaginateConfig,
+  PaginateQuery,
+  Paginated,
+  paginate,
+} from 'nestjs-paginate';
 
 @Injectable()
 export class TenantService {
+  public static paginateConfig: PaginateConfig<Tenant> = {
+    sortableColumns: ['id', 'name', 'email', 'fone', 'document'],
+    nullSort: 'last',
+    defaultSortBy: [['id', 'DESC']],
+    searchableColumns: ['name', 'email', 'fone', 'document'],
+    maxLimit: NO_PAGINATION,
+    filterableColumns: {
+      name: [FilterOperator.ILIKE],
+      email: [FilterOperator.ILIKE],
+      fone: [FilterOperator.ILIKE],
+      document: [FilterOperator.ILIKE],
+      user_id: [FilterOperator.EQ],
+    },
+  };
   constructor(
     @InjectRepository(Tenant)
     private readonly tenantRepository: Repository<Tenant>,
@@ -17,8 +39,8 @@ export class TenantService {
     return await this.tenantRepository.save(createTenantDto);
   }
 
-  async findAll() {
-    return await this.tenantRepository.find();
+  async findAll(query: PaginateQuery): Promise<Paginated<Tenant>> {
+    return paginate(query, this.tenantRepository, TenantService.paginateConfig);
   }
 
   async findOne(id: string, userId: string) {
