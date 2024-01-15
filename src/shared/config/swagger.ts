@@ -15,4 +15,5 @@ export const config = new DocumentBuilder()
     },
     'JWT-auth',
   )
+  .setVersion('1.0')
   .build();
