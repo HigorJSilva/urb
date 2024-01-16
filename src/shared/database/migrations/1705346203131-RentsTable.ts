@@ -61,6 +61,6 @@ export class RentsTable1705346203131 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    queryRunner.query(`DROP TABLE tenants`);
+    queryRunner.query(`DROP TABLE rents`);
   }
 }
