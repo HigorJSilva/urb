@@ -1,5 +1,6 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity({ name: 'rents' })
 export class Rent {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -20,7 +21,7 @@ export class Rent {
   value: number;
 
   @Column()
-  active = true;
+  active: boolean;
 
   @Column()
   startDate: Date;
