@@ -30,7 +30,7 @@ export class RentsTable1705346203131 implements MigrationInterface {
           },
           {
             name: 'dueDate',
-            type: 'date',
+            type: 'varchar',
             isNullable: false,
           },
           {
