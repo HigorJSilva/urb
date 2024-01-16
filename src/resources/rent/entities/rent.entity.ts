@@ -15,7 +15,7 @@ export class Rent {
   tenantId: string;
 
   @Column()
-  dueDate: Date;
+  dueDate: string;
 
   @Column()
   value: number;
