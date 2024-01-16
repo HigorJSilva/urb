@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRentDto } from './dto/create-rent.dto';
 import { UpdateRentDto } from './dto/update-rent.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Rent } from './entities/rent.entity';
+import { Repository } from 'typeorm';
+import { ReturnRentDto } from './dto/return-rent.dto';
 
 @Injectable()
 export class RentService {
-  create(createRentDto: CreateRentDto) {
-    return 'This action adds a new rent';
+  constructor(
+    @InjectRepository(Rent)
+    private readonly tenantRepository: Repository<Rent>,
+  ) {}
+  async create(createRentDto: CreateRentDto): Promise<ReturnRentDto> {
+    return await this.tenantRepository.save(createRentDto);
   }
 
   findAll() {
