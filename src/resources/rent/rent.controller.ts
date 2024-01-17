@@ -3,17 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Headers,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { RentService } from './rent.service';
 import { CreateRentDto } from './dto/create-rent.dto';
 import { UpdateRentDto } from './dto/update-rent.dto';
 import {
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -58,9 +59,34 @@ export class RentController {
     return this.rentService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRentDto: UpdateRentDto) {
-    return this.rentService.update(+id, updateRentDto);
+  @ApiOkResponse({
+    type: ReturnRentDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Rent not found',
+    schema: {
+      example: {
+        message: 'Rent not found',
+        statuCode: 404,
+      },
+    },
+  })
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Headers('user') request: any,
+    @Body() updateRentDto: UpdateRentDto,
+  ): Promise<ReturnRentDto> {
+    return this.rentService.update(id, request.sub.id, updateRentDto);
   }
 
   @Delete(':id')
