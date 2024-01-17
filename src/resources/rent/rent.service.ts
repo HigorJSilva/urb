@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRentDto } from './dto/create-rent.dto';
 import { UpdateRentDto } from './dto/update-rent.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,10 +10,10 @@ import { ReturnRentDto } from './dto/return-rent.dto';
 export class RentService {
   constructor(
     @InjectRepository(Rent)
-    private readonly tenantRepository: Repository<Rent>,
+    private readonly rentRepository: Repository<Rent>,
   ) {}
   async create(createRentDto: CreateRentDto): Promise<ReturnRentDto> {
-    return await this.tenantRepository.save(createRentDto);
+    return await this.rentRepository.save(createRentDto);
   }
 
   findAll() {
@@ -24,11 +24,33 @@ export class RentService {
     return `This action returns a #${id} rent`;
   }
 
-  update(id: number, updateRentDto: UpdateRentDto) {
-    return `This action updates a #${id} rent`;
-  }
+  async update(
+    id: string,
+    userId: string,
+    updateRentDto: UpdateRentDto,
+  ): Promise<ReturnRentDto> {
+    const rent = await this.getRentByUserandId(id, userId);
 
+    if (!rent) {
+      throw new NotFoundException('Rent not found');
+    }
+
+    return await this.rentRepository.save({ ...rent, ...updateRentDto });
+  }
   remove(id: number) {
     return `This action removes a #${id} rent`;
+  }
+
+  async getRentByUserandId(id: string, userId: string): Promise<Rent> {
+    const rent = await this.rentRepository.findOneBy({
+      id,
+      userId,
+    });
+
+    if (!rent) {
+      throw new NotFoundException('Rent not found');
+    }
+
+    return rent;
   }
 }
