@@ -89,8 +89,27 @@ export class RentController {
     return this.rentService.update(id, request.sub.id, updateRentDto);
   }
 
+  @ApiOkResponse({})
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Rent not found',
+    schema: {
+      example: {
+        message: 'Rent not found',
+        statuCode: 404,
+      },
+    },
+  })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rentService.remove(+id);
+  remove(@Param('id') id: string, @Headers('user') request: any) {
+    return this.rentService.remove(id, request.sub.id);
   }
 }
