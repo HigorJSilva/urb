@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRentDto } from './dto/create-rent.dto';
 import { UpdateRentDto } from './dto/update-rent.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -37,8 +37,20 @@ export class RentService {
 
     return await this.rentRepository.save({ ...rent, ...updateRentDto });
   }
-  remove(id: number) {
-    return `This action removes a #${id} rent`;
+
+  async remove(id: string, userId: string) {
+    const rent = await this.getRentByUserandId(id, userId);
+
+    if (!rent) {
+      throw new NotFoundException('Rent not found');
+    }
+
+    if (rent.active) {
+      throw new BadRequestException('Rent is active');
+    }
+
+    await this.rentRepository.delete({ id: rent.id });
+    return;
   }
 
   async getRentByUserandId(id: string, userId: string): Promise<Rent> {
