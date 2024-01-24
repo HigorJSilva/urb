@@ -47,3 +47,7 @@ export const updatedRent: ReturnRentDto = {
   startDate: new Date('2022-09-24T07:11:12.629Z'),
   endDate: null,
 };
+
+export const unActiveRent: ReturnRentDto = Object.assign({}, updatedRent, {
+  active: false,
+});

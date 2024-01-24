@@ -9,7 +9,7 @@ import {
 } from './mocks/rents.mock';
 import { JwtService } from '@nestjs/jwt';
 import { mockRequest } from 'src/resources/tenant/tests/mocks/tenant.mocks';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('RentController', () => {
   let controller: RentController;
@@ -25,6 +25,7 @@ describe('RentController', () => {
           useValue: {
             create: jest.fn().mockResolvedValue(returnedRent),
             update: jest.fn().mockResolvedValue(updatedRent),
+            remove: jest.fn().mockResolvedValue(undefined),
           },
         },
       ],
@@ -67,6 +68,34 @@ describe('RentController', () => {
       await expect(
         controller.update(returnedRent.id, mockRequest, updateRent),
       ).rejects.toEqual(notFoundException);
+    });
+  });
+
+  describe('remove rent service', () => {
+    it('should return undefined if succeeds', async () => {
+      const response = await controller.remove(
+        returnedRent.id,
+        returnedRent.userId,
+      );
+      expect(response).toBe(undefined);
+    });
+
+    it('should return a Not Found Exception if rent not found', async () => {
+      const notFoundException = new NotFoundException('Rent not found');
+      jest.spyOn(service, 'remove').mockRejectedValueOnce(notFoundException);
+
+      await expect(
+        controller.remove(returnedRent.id, returnedRent.userId),
+      ).rejects.toEqual(notFoundException);
+    });
+
+    it('should return a Bad Request Exception if rent is active', async () => {
+      const badRequestException = new BadRequestException('Rent is active');
+      jest.spyOn(service, 'remove').mockRejectedValueOnce(badRequestException);
+
+      await expect(
+        controller.remove(returnedRent.id, returnedRent.userId),
+      ).rejects.toEqual(badRequestException);
     });
   });
 });
