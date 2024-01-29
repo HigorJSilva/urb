@@ -8,8 +8,8 @@ import {
   updatedRent,
 } from './mocks/rents.mock';
 import { JwtService } from '@nestjs/jwt';
-import { mockRequest } from 'src/resources/tenant/tests/mocks/tenant.mocks';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { mockRequest } from 'src/resources/tenant/tests/mocks/tenant.mocks';
 
 describe('RentController', () => {
   let controller: RentController;
@@ -26,6 +26,7 @@ describe('RentController', () => {
             create: jest.fn().mockResolvedValue(returnedRent),
             update: jest.fn().mockResolvedValue(updatedRent),
             remove: jest.fn().mockResolvedValue(undefined),
+            findOne: jest.fn().mockResolvedValue(returnedRent),
           },
         },
       ],
@@ -96,6 +97,23 @@ describe('RentController', () => {
       await expect(
         controller.remove(returnedRent.id, returnedRent.userId),
       ).rejects.toEqual(badRequestException);
+    });
+  });
+
+  describe('show rent by id service', () => {
+    it('should return the rent given an id', async () => {
+      const response = await controller.findOne(returnedRent.id, mockRequest);
+
+      expect(response).toEqual(returnedRent);
+    });
+
+    it('should return a Not Found Exception if rent not found', async () => {
+      const notFoundException = new NotFoundException('Rent not found');
+      jest.spyOn(service, 'findOne').mockRejectedValue(notFoundException);
+
+      await expect(
+        controller.findOne(returnedRent.id, mockRequest),
+      ).rejects.toEqual(notFoundException);
     });
   });
 });

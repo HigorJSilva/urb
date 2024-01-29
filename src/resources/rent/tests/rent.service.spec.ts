@@ -104,4 +104,25 @@ describe('RentService', () => {
       ).rejects.toThrowError(badRequestException);
     });
   });
+
+  describe('show rent by id service', () => {
+    it('should return the rent given an id', async () => {
+      const response = await service.findOne(
+        returnedRent.id,
+        createRent.userId,
+      );
+
+      expect(response).toEqual(returnedRent);
+    });
+
+    it('should return a Not Found Exception if rent not found', async () => {
+      jest.spyOn(rentRepository, 'findOneBy').mockResolvedValueOnce(null);
+
+      const notFoundException = new NotFoundException('Rent not found');
+
+      await expect(
+        service.findOne('invalidId', createRent.userId),
+      ).rejects.toEqual(notFoundException);
+    });
+  });
 });
