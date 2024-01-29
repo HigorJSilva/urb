@@ -54,9 +54,30 @@ export class RentController {
     return this.rentService.findAll();
   }
 
+  @ApiOkResponse({
+    type: ReturnRentDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Rent not found',
+    schema: {
+      example: {
+        message: 'Rent not found',
+        statuCode: 404,
+      },
+    },
+  })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.rentService.findOne(+id);
+  findOne(@Param('id') id: string, @Headers('user') request: any) {
+    return this.rentService.findOne(id, request.sub.id);
   }
 
   @ApiOkResponse({
