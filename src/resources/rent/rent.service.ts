@@ -24,8 +24,8 @@ export class RentService {
     return `This action returns all rent`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} rent`;
+  async findOne(id: string, userId: string) {
+    return await this.getRentByUserandId(id, userId);
   }
 
   async update(
