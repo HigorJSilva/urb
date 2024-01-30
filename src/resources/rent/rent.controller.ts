@@ -21,6 +21,13 @@ import {
 } from '@nestjs/swagger';
 import { ReturnRentDto } from './dto/return-rent.dto';
 import { AuthGuard } from 'src/shared/config/auth/auth.guard';
+import {
+  ApiOkPaginatedResponse,
+  Paginate,
+  PaginateQuery,
+  Paginated,
+} from 'nestjs-paginate';
+import { Rent } from './entities/rent.entity';
 
 @Controller('rent')
 @ApiTags('Rents')
@@ -49,9 +56,24 @@ export class RentController {
     });
   }
 
+  @ApiOkPaginatedResponse(ReturnRentDto, RentService.paginateConfig)
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Error',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statuCode: 401,
+      },
+    },
+  })
   @Get()
-  findAll() {
-    return this.rentService.findAll();
+  findAll(
+    @Headers('user') request: any,
+    @Paginate() query: PaginateQuery,
+  ): Promise<Paginated<Rent>> {
+    query.filter = query.filter || {};
+    query.filter.user_id = request.sub.id;
+    return this.rentService.findAll(query);
   }
 
   @ApiOkResponse({

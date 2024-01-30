@@ -6,6 +6,10 @@ import {
   IsInt,
   IsUUID,
 } from 'class-validator';
+import { ReturnPropertyDto } from 'src/resources/properties/dto/return-property.dto';
+import { Property } from 'src/resources/properties/entities/property.entity';
+import { ReturnTenantDto } from 'src/resources/tenant/dto/return-tunant.dto';
+import { Tenant } from 'src/resources/tenant/entities/tenant.entity';
 
 export class ReturnRentDto {
   @ApiProperty({
@@ -68,4 +72,16 @@ export class ReturnRentDto {
   })
   @IsDateString()
   endDate: Date;
+
+  @ApiProperty({
+    description: "Rent's tenant",
+    type: ReturnTenantDto,
+  })
+  tenant?: Tenant;
+
+  @ApiProperty({
+    description: "Rent's property",
+    type: ReturnPropertyDto,
+  })
+  property?: Property;
 }
