@@ -1,10 +1,12 @@
 import { Addresses } from 'src/resources/addresses/entities/address.entity';
+import { Rent } from 'src/resources/rent/entities/rent.entity';
 import { User } from 'src/resources/users/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -29,4 +31,7 @@ export class Property {
   @ManyToOne(() => User, (user) => user.properties)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
+
+  @OneToMany(() => Rent, (rent) => rent.property)
+  rent: Rent[];
 }

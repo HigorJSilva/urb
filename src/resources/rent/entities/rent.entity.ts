@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Property } from 'src/resources/properties/entities/property.entity';
+import { Tenant } from 'src/resources/tenant/entities/tenant.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'rents' })
 export class Rent {
@@ -28,4 +36,12 @@ export class Rent {
 
   @Column()
   endDate: Date;
+
+  @ManyToOne(() => Property, (property) => property.rent)
+  @JoinColumn({ name: 'property_id', referencedColumnName: 'id' })
+  property?: Property;
+
+  @ManyToOne(() => Tenant, (tenant) => tenant.rent)
+  @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
+  tenant?: Tenant;
 }
