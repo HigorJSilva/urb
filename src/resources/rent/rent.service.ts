@@ -9,9 +9,36 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Rent } from './entities/rent.entity';
 import { Repository } from 'typeorm';
 import { ReturnRentDto } from './dto/return-rent.dto';
+import {
+  FilterOperator,
+  NO_PAGINATION,
+  PaginateConfig,
+  PaginateQuery,
+  paginate,
+} from 'nestjs-paginate';
 
 @Injectable()
 export class RentService {
+  public static paginateConfig: PaginateConfig<Rent> = {
+    relations: ['property.address.city', 'tenant'],
+    sortableColumns: ['id', 'value', 'dueDate', 'active'],
+    nullSort: 'last',
+    defaultSortBy: [['id', 'DESC']],
+    searchableColumns: [
+      'property.title',
+      'tenant.name',
+      'tenant.document',
+      'active',
+    ],
+    maxLimit: NO_PAGINATION,
+    filterableColumns: {
+      'property.title': [FilterOperator.ILIKE],
+      'tenant.name': [FilterOperator.ILIKE],
+      'tenant.document': [FilterOperator.ILIKE],
+      active: [FilterOperator.EQ],
+    },
+  };
+
   constructor(
     @InjectRepository(Rent)
     private readonly rentRepository: Repository<Rent>,
@@ -20,8 +47,8 @@ export class RentService {
     return await this.rentRepository.save(createRentDto);
   }
 
-  findAll() {
-    return `This action returns all rent`;
+  findAll(query: PaginateQuery) {
+    return paginate(query, this.rentRepository, RentService.paginateConfig);
   }
 
   async findOne(id: string, userId: string) {
