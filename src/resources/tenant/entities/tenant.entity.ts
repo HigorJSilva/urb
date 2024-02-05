@@ -34,5 +34,5 @@ export class Tenant {
   user?: User;
 
   @OneToMany(() => Rent, (rent) => rent.tenant)
-  rent: Rent[];
+  rent?: Rent[];
 }
