@@ -8,9 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class InstallmentService {
   constructor(
     @InjectRepository(Installment)
-    private readonly intallmentRepository: Repository<Installment>,
+    private readonly installmentRepository: Repository<Installment>,
   ) {}
-  async create(createIntallmentDto: CreateInstallmentDto) {
-    return await this.intallmentRepository.save(createIntallmentDto);
+  async create(createInstallmentDto: CreateInstallmentDto) {
+    return await this.installmentRepository.save(createInstallmentDto);
   }
 }
