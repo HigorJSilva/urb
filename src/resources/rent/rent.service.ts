@@ -1,13 +1,14 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateRentDto } from './dto/create-rent.dto';
 import { UpdateRentDto } from './dto/update-rent.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Rent } from './entities/rent.entity';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { ReturnRentDto } from './dto/return-rent.dto';
 import {
   FilterOperator,
@@ -19,6 +20,8 @@ import {
 
 @Injectable()
 export class RentService {
+  private readonly logger = new Logger(RentService.name);
+
   public static paginateConfig: PaginateConfig<Rent> = {
     relations: ['property.address.city', 'tenant'],
     sortableColumns: ['id', 'value', 'dueDate', 'active'],
@@ -95,5 +98,47 @@ export class RentService {
     }
 
     return rent;
+  }
+
+  async dispatchDueRent() {
+    const rents = await this.getActiveRents().catch(() => undefined);
+    console.log('TURBO >> RentService >> rents:', rents);
+
+    if (!rents) {
+      this.logger.warn('No Rent due today\n DAY:' + new Date().toISOString());
+      return;
+    }
+
+    //TODO: create installment
+  }
+
+  private async getActiveRents(): Promise<Rent[]> {
+    const currentDate = new Date()
+      .toISOString()
+      .split('T')[0] as unknown as Date;
+
+    const rents = await this.rentRepository.find({
+      where: [
+        {
+          active: true,
+          dueDate: new Date().getDate().toString().padStart(2, '0'),
+          startDate: LessThanOrEqual(currentDate),
+          endDate: MoreThanOrEqual(currentDate),
+        },
+        {
+          active: true,
+          dueDate: new Date().getDate().toString().padStart(2, '0'),
+          startDate: LessThanOrEqual(currentDate),
+          endDate: null,
+        },
+      ],
+      relations: ['tenant'],
+    });
+
+    if (!rents.length) {
+      throw new NotFoundException('No active rents found');
+    }
+
+    return rents;
   }
 }
