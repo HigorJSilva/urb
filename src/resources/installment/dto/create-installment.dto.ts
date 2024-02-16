@@ -3,13 +3,6 @@ import { IsDecimal, IsOptional, IsUUID } from 'class-validator';
 
 export class CreateInstallmentDto {
   @ApiProperty({
-    description: 'Id of the installment',
-    required: true,
-  })
-  @IsUUID()
-  id: string;
-
-  @ApiProperty({
     description: 'Id of the rent',
     required: true,
   })
@@ -20,7 +13,7 @@ export class CreateInstallmentDto {
     description: 'Payment date',
   })
   @IsOptional()
-  date: string;
+  date: Date;
 
   @ApiProperty({
     description: 'Installment value',

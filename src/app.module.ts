@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ResourcesModule } from './resources/resources.module';
 import { IsUniqueConstraint } from './shared/rules/unique';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       envFilePath: ['.env'],
     }),
     ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as 'postgres',
       host: process.env.DB_HOST,
