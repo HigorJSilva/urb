@@ -28,6 +28,7 @@ import {
   Paginated,
 } from 'nestjs-paginate';
 import { Rent } from './entities/rent.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller('rent')
 @ApiTags('Rents')
@@ -154,5 +155,10 @@ export class RentController {
   @Delete(':id')
   remove(@Param('id') id: string, @Headers('user') request: any) {
     return this.rentService.remove(id, request.sub.id);
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_10AM)
+  dispatchDueRent() {
+    return this.rentService.dispatchDueRent();
   }
 }
