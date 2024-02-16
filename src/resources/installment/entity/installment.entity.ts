@@ -9,7 +9,10 @@ export class Installment {
   rentId: string;
 
   @Column()
-  date: string;
+  date: Date;
+
+  @Column({ name: 'payment_date' })
+  paymentDate?: Date;
 
   @Column()
   description: string;
