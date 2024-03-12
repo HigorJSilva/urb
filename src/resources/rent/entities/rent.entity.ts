@@ -1,3 +1,4 @@
+import { Installment } from 'src/resources/installment/entity/installment.entity';
 import { Property } from 'src/resources/properties/entities/property.entity';
 import { Tenant } from 'src/resources/tenant/entities/tenant.entity';
 import {
@@ -5,6 +6,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -44,4 +46,7 @@ export class Rent {
   @ManyToOne(() => Tenant, (tenant) => tenant.rent)
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
   tenant?: Tenant;
+
+  @OneToMany(() => Installment, (installment) => installment.rent)
+  installments?: Installment[];
 }

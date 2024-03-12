@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Rent } from 'src/resources/rent/entities/rent.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'installment' })
 export class Installment {
@@ -19,4 +26,8 @@ export class Installment {
 
   @Column()
   value: number;
+
+  @ManyToOne(() => Rent, (rent) => rent.installments)
+  @JoinColumn({ name: 'rent_id', referencedColumnName: 'id' })
+  rent?: Rent;
 }
