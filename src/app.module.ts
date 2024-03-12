@@ -7,6 +7,7 @@ import { ResourcesModule } from './resources/resources.module';
 import { IsUniqueConstraint } from './shared/rules/unique';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { NotificationsModule } from './shared/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       migrationsRun: true,
     }),
     ResourcesModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, IsUniqueConstraint],

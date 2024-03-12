@@ -105,14 +105,12 @@ export class RentService {
 
   async dispatchDueRent() {
     const rents = await this.getActiveRents().catch(() => undefined);
-    console.log('TURBO >> RentService >> rents:', rents);
 
     if (!rents) {
       this.logger.warn('No Rent due today\n DAY:' + new Date().toISOString());
       return;
     }
 
-    //TODO: create installment
     this.eventEmitter.emit('rent.due', new DueRentEvent(rents));
   }
 

@@ -6,6 +6,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DueRentEvent } from '../rent/events/due-rent.event';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { NewInstallmentEvent } from './events/new-installment.event';
+import {
+  IInvoiceInfo,
+  ITenantContact,
+  NotifyInstallmentEvent,
+} from './events/notify-installment.event';
 
 @Injectable()
 export class InstallmentService {
@@ -58,13 +63,20 @@ export class InstallmentService {
     const month = new Date().toLocaleString('default', { month: 'long' });
 
     install.forEach(async (installment) => {
-      const eventPayload = {
+      const invoiceInfo: IInvoiceInfo = {
         tenantName: installment.rent.tenant.name,
-        amount: installment.value,
+        amount: installment.value.toFixed(2),
         month,
       };
 
-      //TODO: queue Notification
+      const tenantContact: ITenantContact = {
+        email: installment.rent.tenant.email,
+      };
+
+      this.eventEmitter.emit(
+        'installment.notify',
+        new NotifyInstallmentEvent(tenantContact, invoiceInfo),
+      );
     });
   }
 
