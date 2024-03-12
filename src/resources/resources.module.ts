@@ -5,6 +5,7 @@ import { AddressesModule } from './addresses/addresses.module';
 import { PropertiesModule } from './properties/properties.module';
 import { TenantModule } from './tenant/tenant.module';
 import { RentModule } from './rent/rent.module';
+import { InstallmentModule } from './installment/installment.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { RentModule } from './rent/rent.module';
     PropertiesModule,
     TenantModule,
     RentModule,
+    InstallmentModule,
   ],
 })
 export class ResourcesModule {}

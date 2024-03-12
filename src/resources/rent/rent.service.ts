@@ -17,6 +17,8 @@ import {
   PaginateQuery,
   paginate,
 } from 'nestjs-paginate';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { DueRentEvent } from './events/due-rent.event';
 
 @Injectable()
 export class RentService {
@@ -45,6 +47,7 @@ export class RentService {
   constructor(
     @InjectRepository(Rent)
     private readonly rentRepository: Repository<Rent>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
   async create(createRentDto: CreateRentDto): Promise<ReturnRentDto> {
     return await this.rentRepository.save(createRentDto);
@@ -102,14 +105,13 @@ export class RentService {
 
   async dispatchDueRent() {
     const rents = await this.getActiveRents().catch(() => undefined);
-    console.log('TURBO >> RentService >> rents:', rents);
 
     if (!rents) {
       this.logger.warn('No Rent due today\n DAY:' + new Date().toISOString());
       return;
     }
 
-    //TODO: create installment
+    this.eventEmitter.emit('rent.due', new DueRentEvent(rents));
   }
 
   private async getActiveRents(): Promise<Rent[]> {
@@ -132,7 +134,6 @@ export class RentService {
           endDate: null,
         },
       ],
-      relations: ['tenant'],
     });
 
     if (!rents.length) {
