@@ -1,4 +1,4 @@
-export default `<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+export default `<div>
         <h2>Rent Invoice</h2>
         <p>Dear {tenantName},</p>
         <p>Your rent invoice for the month of {month} has been generated with an amount of {amount}.</p>
