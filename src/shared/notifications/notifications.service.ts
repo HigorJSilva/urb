@@ -3,12 +3,12 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { IEmailProvider } from '../interfaces/email.provider';
 import dueRentEmail from 'src/shared/utils/email/installment-template';
 import { NotifyInstallmentEvent } from 'src/resources/installment/events/notify-installment.event';
-import NodeMailer from '../providers/mailer/nodemailer';
+import LamdaMailer from '../providers/mailer/lambda-mailer';
 
 @Injectable()
 export class NotificationsService {
   constructor(
-    @Inject(NodeMailer)
+    @Inject(LamdaMailer)
     private readonly mailer: IEmailProvider,
   ) {}
 
@@ -26,11 +26,15 @@ export class NotificationsService {
       return result.replace(regex, invoiceInfo[placeholder]);
     }, dueRentEmail);
 
-    this.mailer.send({
+    const wasSent = this.mailer.send({
       to: tenantEmail,
       subject: 'Rent Invoice ' + invoiceInfo.month,
-      text: 'Rent Invoice' + invoiceInfo.month,
+      text: 'Rent Invoice ' + invoiceInfo.month,
       html,
     });
+
+    if (!wasSent) {
+      console.error('Could not send email');
+    }
   }
 }
