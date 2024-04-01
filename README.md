@@ -24,7 +24,16 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A dockerized [Nest](https://github.com/nestjs/nest) REST API application to manage property rent.
+
+URB lets you create propertyes, tenant and manage rents. URB uses crons to notify users of the latest rent invoice and events to dispatch all operations related to a creation of the invoice.
+
+# Future Enhancements (Nice-to-Have)
+
+ - Phone-book like function to let users store useful contact info of service providers like electricians and plumbers
+ - Let users store property service providers account holder info. Ex: Power Service Provider Account - Holder name, Holder Identification
+ - Expenses Report tied to the property with the possibility to add or subtract the expense value from the monthly installment
+ - With the Expense Report the invoice notification could have the list of itens added or removed from the monthly installment
 
 ## Installation
 
